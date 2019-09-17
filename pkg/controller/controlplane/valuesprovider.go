@@ -55,6 +55,7 @@ const (
 	cloudControllerManagerServerName     = "cloud-controller-manager-server"
 	groupRolebindingControllerName       = "group-rolebinding-controller"
 	accountingExporterName               = "accounting-exporter"
+	polarisWebhookName                   = "polaris-webhook"
 )
 
 var controlPlaneSecrets = &secrets.Secrets{
@@ -109,6 +110,20 @@ var controlPlaneSecrets = &secrets.Secrets{
 			},
 			&secrets.ControlPlaneSecretConfig{
 				CertificateSecretConfig: &secrets.CertificateSecretConfig{
+					Name:       polarisWebhookName,
+					CommonName: "system:polaris-webhook",
+					// Groupname of user
+					Organization: []string{polarisWebhookName},
+					CertType:     secrets.ClientCert,
+					SigningCA:    cas[gardencorev1alpha1.SecretNameCACluster],
+				},
+				KubeConfigRequest: &secrets.KubeConfigRequest{
+					ClusterName:  clusterName,
+					APIServerURL: gardencorev1alpha1.DeploymentNameKubeAPIServer,
+				},
+			},
+			&secrets.ControlPlaneSecretConfig{
+				CertificateSecretConfig: &secrets.CertificateSecretConfig{
 					Name:       cloudControllerManagerServerName,
 					CommonName: cloudControllerManagerDeploymentName,
 					DNSNames:   controlplane.DNSNamesForService(cloudControllerManagerDeploymentName, clusterName),
@@ -146,6 +161,15 @@ var controlPlaneChart = &chart.Chart{
 		{Type: &appsv1.Deployment{}, Name: "group-rolebinding-controller"},
 
 		{Type: &appsv1.Deployment{}, Name: "accounting-exporter"},
+
+		{Type: &corev1.Namespace{}, Name: "polaris"},
+		{Type: &corev1.Secret{}, Name: "polaris-webhook"},
+		{Type: &corev1.ServiceAccount{}, Name: "polaris-webhook"},
+		{Type: &rbacv1.Role{}, Name: "polaris-webhook"},
+		{Type: &rbacv1.RoleBinding{}, Name: "polaris-webhook"},
+		{Type: &corev1.ConfigMap{}, Name: "polaris"},
+		{Type: &corev1.Service{}, Name: "polaris-webhook"},
+		{Type: &appsv1.Deployment{}, Name: "polaris-webhook"},
 	},
 }
 
@@ -160,6 +184,9 @@ var cpShootChart = &chart.Chart{
 
 		{Type: &rbacv1.ClusterRole{}, Name: "system:accounting-exporter"},
 		{Type: &rbacv1.ClusterRoleBinding{}, Name: "system:accounting-exporter"},
+
+		{Type: &rbacv1.ClusterRole{}, Name: "polaris-webhook"},
+		{Type: &rbacv1.ClusterRoleBinding{}, Name: "polaris-webhook"},
 	},
 }
 

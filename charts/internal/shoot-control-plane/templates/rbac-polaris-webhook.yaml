@@ -1,0 +1,70 @@
+---
+# Source: polaris/templates/webhook.rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+    name: polaris-webhook
+    labels:
+        app: polaris
+rules:
+# auditor rules rbac
+- apiGroups:
+  - 'apps'
+  - 'extensions'
+  resources:
+  - 'deployments'
+  - 'statefulsets'
+  - 'daemonsets'
+  verbs:
+  - 'get'
+  - 'list'
+- apiGroups:
+  - 'batch'
+  resources:
+  - 'jobs'
+  - 'cronjobs'
+  verbs:
+  - 'get'
+  - 'list'
+- apiGroups:
+  - ''
+  resources:
+  - 'nodes'
+  - 'namespaces'
+  - 'pods'
+  - 'replicationcontrollers'
+  verbs:
+  - 'get'
+  - 'list'
+# required by controller-runtime code doing a cluster wide lookup
+# when it seems namespace would suffice
+- apiGroups:
+  - ''
+  resources:
+  - 'secrets'
+  - 'services'
+  verbs:
+  - 'get'
+  - 'list'
+  - 'watch'
+- apiGroups:
+  - 'admissionregistration.k8s.io'
+  resources:
+  - 'validatingwebhookconfigurations'
+  verbs:
+  - '*'
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+    name: polaris-webhook
+    labels:
+        app: polaris
+roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: ClusterRole
+    name: polaris-webhook
+subjects:
+- kind: User
+  name: system:polaris-webhook
+  namespace: polaris
