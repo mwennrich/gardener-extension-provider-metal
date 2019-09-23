@@ -241,8 +241,6 @@ spec:
               - /opt/kubecfg/kubeconfig
               - --config
               - /opt/app/config.yaml
-              - --disable-webhook-config-installer
-              - true
               image: 'quay.io/reactiveops/polaris:0.4'
               imagePullPolicy: 'Always'
               ports:
