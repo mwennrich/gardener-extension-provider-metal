@@ -110,20 +110,6 @@ var controlPlaneSecrets = &secrets.Secrets{
 			},
 			&secrets.ControlPlaneSecretConfig{
 				CertificateSecretConfig: &secrets.CertificateSecretConfig{
-					Name:       "polaris-webhook-kubeconfig",
-					CommonName: "system:polaris-webhook",
-					// Groupname of user
-					Organization: []string{polarisWebhookName},
-					CertType:     secrets.ClientCert,
-					SigningCA:    cas[gardencorev1alpha1.SecretNameCACluster],
-				},
-				KubeConfigRequest: &secrets.KubeConfigRequest{
-					ClusterName:  clusterName,
-					APIServerURL: gardencorev1alpha1.DeploymentNameKubeAPIServer,
-				},
-			},
-			&secrets.ControlPlaneSecretConfig{
-				CertificateSecretConfig: &secrets.CertificateSecretConfig{
 					Name:       cloudControllerManagerServerName,
 					CommonName: cloudControllerManagerDeploymentName,
 					DNSNames:   controlplane.DNSNamesForService(cloudControllerManagerDeploymentName, clusterName),
@@ -170,6 +156,9 @@ var controlPlaneChart = &chart.Chart{
 		{Type: &corev1.ConfigMap{}, Name: "polaris"},
 		{Type: &corev1.Service{}, Name: "polaris-webhook"},
 		{Type: &appsv1.Deployment{}, Name: "polaris-webhook"},
+
+		{Type: &rbacv1.ClusterRole{}, Name: "polaris-webhook"},
+		{Type: &rbacv1.ClusterRoleBinding{}, Name: "polaris-webhook"},
 	},
 }
 
@@ -184,9 +173,6 @@ var cpShootChart = &chart.Chart{
 
 		{Type: &rbacv1.ClusterRole{}, Name: "system:accounting-exporter"},
 		{Type: &rbacv1.ClusterRoleBinding{}, Name: "system:accounting-exporter"},
-
-		{Type: &rbacv1.ClusterRole{}, Name: "polaris-webhook"},
-		{Type: &rbacv1.ClusterRoleBinding{}, Name: "polaris-webhook"},
 	},
 }
 
