@@ -116,7 +116,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
-    name: polaris-webhook
+    name: {{ .Release.Namespace }}-polaris-webhook
     labels:
         app: polaris
 roleRef:
@@ -241,6 +241,8 @@ spec:
               - /opt/kubecfg/kubeconfig
               - --config
               - /opt/app/config.yaml
+              - --disable-webhook-config-installer
+              - true
               image: 'quay.io/reactiveops/polaris:0.4'
               imagePullPolicy: 'Always'
               ports:
@@ -292,7 +294,6 @@ spec:
                 readOnly: false
               - name: kubeconfig
                 mountPath: /opt/kubecfg
-            serviceAccountName:  polaris-webhook
             nodeSelector: {}
             tolerations: []
             volumes:
