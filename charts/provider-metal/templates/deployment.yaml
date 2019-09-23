@@ -51,6 +51,13 @@ spec:
         - name: IMAGEVECTOR_OVERWRITE
           value: /charts_overwrite/images_overwrite.yaml
         {{- end }}
+        resources:
+          requests:
+            memory: "150Mi"
+            cpu: "500m"
+          limits:
+            memory: "256Mi"
+            cpu: "1"
         ports:
         - name: webhook-server
           containerPort: {{ .Values.webhookConfig.serverPort }}
