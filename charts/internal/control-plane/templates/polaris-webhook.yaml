@@ -1,16 +1,10 @@
 ---
-# Source: polaris/templates/0-namespace.yaml
-apiVersion: v1
-kind: Namespace
-metadata:
-    name: polaris
----
 # Source: polaris/templates/webhook.secret.yaml
 apiVersion: v1
 kind: Secret
 metadata:
     name: polaris-webhook
-    namespace: polaris
+    namespace: {{ .Release.Namespace }}
     labels:
         app: polaris
 type: Opaque
@@ -22,7 +16,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
     name: polaris-webhook
-    namespace: polaris
+    namespace: {{ .Release.Namespace }}
     labels:
         app: polaris
 ---
@@ -30,7 +24,7 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
 metadata:
     name: polaris-webhook
-    namespace: polaris
+    namespace: {{ .Release.Namespace }}
     labels:
         app: polaris
 rules:
@@ -47,7 +41,7 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
 metadata:
     name: polaris-webhook
-    namespace: polaris
+    namespace: {{ .Release.Namespace }}
     labels:
         app: polaris
 roleRef:
@@ -57,7 +51,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: polaris-webhook
-  namespace: polaris
+  namespace: {{ .Release.Namespace }}
 
 ---
 # Source: polaris/templates/configmap.yaml
@@ -65,7 +59,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
     name: polaris
-    namespace: polaris
+    namespace: {{ .Release.Namespace }}
     labels:
         app: polaris
 data:
@@ -126,7 +120,7 @@ apiVersion: v1
 kind: Service
 metadata:
     name: polaris-webhook
-    namespace: polaris
+    namespace: {{ .Release.Namespace }}
     labels:
         app: polaris
 spec:
@@ -147,7 +141,7 @@ metadata:
     annotations:
         checksum/config: '8aa5a565fba7a2db98d46752087de8c1dcc83b70cd762c5829d5ba01270d54a2'
     name: polaris-webhook
-    namespace: polaris
+    namespace: {{ .Release.Namespace }}
     labels:
         app: polaris
         component: webhook
@@ -237,7 +231,7 @@ spec:
               emptyDir: {}
             - name: kubeconfig
               secret:
-                  secretName: polaris-webhook-kubeconfig
+                secretName: polaris-webhook-kubeconfig
 
 ---
 # Source: polaris/templates/audit.job.yaml

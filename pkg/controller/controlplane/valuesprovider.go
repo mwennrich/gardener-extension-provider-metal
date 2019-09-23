@@ -110,7 +110,7 @@ var controlPlaneSecrets = &secrets.Secrets{
 			},
 			&secrets.ControlPlaneSecretConfig{
 				CertificateSecretConfig: &secrets.CertificateSecretConfig{
-					Name:       polarisWebhookName,
+					Name:       "polaris-webhook-kubeconfig",
 					CommonName: "system:polaris-webhook",
 					// Groupname of user
 					Organization: []string{polarisWebhookName},
