@@ -47,6 +47,7 @@ rules:
   - 'get'
   - 'list'
   - 'watch'
+  - 'create'
 - apiGroups:
   - 'admissionregistration.k8s.io'
   resources:

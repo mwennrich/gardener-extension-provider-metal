@@ -236,11 +236,10 @@ spec:
             - name: webhook
               command:
               - polaris
+              - --log-level=debug
               - --webhook
-              - --kubeconfig
-              - /opt/kubecfg/kubeconfig
-              - --config
-              - /opt/app/config.yaml
+              - --kubeconfig=/opt/kubecfg/kubeconfig
+              - --config=/opt/app/config.yaml
               image: 'quay.io/reactiveops/polaris:0.4'
               imagePullPolicy: 'Always'
               ports:
